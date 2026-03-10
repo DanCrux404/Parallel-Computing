@@ -15,13 +15,14 @@ public class ColorManager {
     }
 
     private void generateColors(int total) {
-        // Genereate colors by RGB uniformly
+        float goldenRatio = 0.618033988749895f; // Golden ratio — guarantees max distance between consecutive colors
+        float hue = 0.0f;
+        // Use HSB to asure colors well distributed
         for (int i = 0; i < total; i++) {
-            // Use HSB to asure colors well distributed
-            float hue = (float) i / total;  // 0.0 a 1.0
-            float saturation = 0.7f + (i % 5) * 0.06f; // a bit of variety
-            float brightness = 0.7f + (i % 3) * 0.1f;  // a bit more bright
-            colors.add(Color.getHSBColor(hue, (float)Math.min(saturation, 1f), (float)Math.min(brightness, 1f)));
+            hue = (hue + goldenRatio) % 1.0f; // Jump by golden ratio — never repeats pattern
+            float saturation = 0.75f;
+            float brightness = 0.85f;
+            colors.add(Color.getHSBColor(hue, saturation, brightness));
         }
     }
 
