@@ -1,18 +1,61 @@
 package windows;
 
-/**
- *
- * @author dante
- */
+import controller.SimulationManager;
+import java.awt.Color;
+import javax.swing.JPanel;
+
+
 public class MainWindow extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainWindow.class.getName());
+    private JPanel[] cells = new JPanel[10];
+    private SimulationManager simulationManager; // Brain of the simulation
 
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
         initComponents();
+
+        JPanel[] temp = {
+            Cell0, Cell1, Cell2, Cell3, Cell4,
+            Cell5, Cell6, Cell7, Cell8, Cell9
+        };
+
+        for (int i = 0; i < temp.length; i++) {
+            cells[i] = temp[i];
+        }
+
+        // Create the simulation manager — it creates Buffer and ColorManager
+        simulationManager = new SimulationManager(this);
+
+        // Connect buttons to simulation manager
+        btnAddProducer.addActionListener(e -> simulationManager.addProducer());
+        btnDeleteProducer.addActionListener(e -> simulationManager.removeProducer());
+        btnAddConsumer.addActionListener(e -> simulationManager.addConsumer());
+        btnDeleteConsumer.addActionListener(e -> simulationManager.removeConsumer());
+    }
+
+    // ─── PUBLIC METHODS for SimulationManager to call ────────────
+    // Paint a buffer cell with the producer's color
+    public void setCellColor(int index, Color color) {
+        if (index >= 0 && index < cells.length) {
+            cells[index].setBackground(color);
+            cells[index].repaint();
+        }
+    }
+
+    // Update north counters
+    public void setProducerCount(int count) {
+        lblProducersNumb.setText(String.valueOf(count));
+    }
+
+    public void setConsumerCount(int count) {
+        lblConsumersNumb.setText(String.valueOf(count));
+    }
+
+    public void setBufferCount(int count) {
+        lblBufferNumb.setText(String.valueOf(count));
     }
 
     /**
@@ -41,7 +84,7 @@ public class MainWindow extends javax.swing.JFrame {
         Cell0 = new javax.swing.JPanel();
         Cell1 = new javax.swing.JPanel();
         Cell2 = new javax.swing.JPanel();
-        cell3 = new javax.swing.JPanel();
+        Cell3 = new javax.swing.JPanel();
         Cell4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         Cell5 = new javax.swing.JPanel();
@@ -97,7 +140,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.GridLayout(1, 0, 15, 15));
 
         Cell0.setBackground(new java.awt.Color(255, 255, 255));
-        Cell0.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell0.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell0Layout = new javax.swing.GroupLayout(Cell0);
         Cell0.setLayout(Cell0Layout);
@@ -113,7 +156,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1.add(Cell0);
 
         Cell1.setBackground(new java.awt.Color(255, 255, 255));
-        Cell1.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell1Layout = new javax.swing.GroupLayout(Cell1);
         Cell1.setLayout(Cell1Layout);
@@ -129,7 +172,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel1.add(Cell1);
 
         Cell2.setBackground(new java.awt.Color(255, 255, 255));
-        Cell2.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell2Layout = new javax.swing.GroupLayout(Cell2);
         Cell2.setLayout(Cell2Layout);
@@ -144,24 +187,24 @@ public class MainWindow extends javax.swing.JFrame {
 
         jPanel1.add(Cell2);
 
-        cell3.setBackground(new java.awt.Color(255, 255, 255));
-        cell3.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell3.setBackground(new java.awt.Color(255, 255, 255));
+        Cell3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        javax.swing.GroupLayout cell3Layout = new javax.swing.GroupLayout(cell3);
-        cell3.setLayout(cell3Layout);
-        cell3Layout.setHorizontalGroup(
-            cell3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout Cell3Layout = new javax.swing.GroupLayout(Cell3);
+        Cell3.setLayout(Cell3Layout);
+        Cell3Layout.setHorizontalGroup(
+            Cell3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 130, Short.MAX_VALUE)
         );
-        cell3Layout.setVerticalGroup(
-            cell3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        Cell3Layout.setVerticalGroup(
+            Cell3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 159, Short.MAX_VALUE)
         );
 
-        jPanel1.add(cell3);
+        jPanel1.add(Cell3);
 
         Cell4.setBackground(new java.awt.Color(255, 255, 255));
-        Cell4.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell4Layout = new javax.swing.GroupLayout(Cell4);
         Cell4.setLayout(Cell4Layout);
@@ -181,7 +224,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel2.setLayout(new java.awt.GridLayout(1, 0, 15, 15));
 
         Cell5.setBackground(new java.awt.Color(255, 255, 255));
-        Cell5.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell5Layout = new javax.swing.GroupLayout(Cell5);
         Cell5.setLayout(Cell5Layout);
@@ -197,7 +240,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel2.add(Cell5);
 
         Cell6.setBackground(new java.awt.Color(255, 255, 255));
-        Cell6.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell6Layout = new javax.swing.GroupLayout(Cell6);
         Cell6.setLayout(Cell6Layout);
@@ -213,7 +256,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel2.add(Cell6);
 
         Cell7.setBackground(new java.awt.Color(255, 255, 255));
-        Cell7.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell7Layout = new javax.swing.GroupLayout(Cell7);
         Cell7.setLayout(Cell7Layout);
@@ -229,7 +272,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel2.add(Cell7);
 
         Cell8.setBackground(new java.awt.Color(255, 255, 255));
-        Cell8.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell8Layout = new javax.swing.GroupLayout(Cell8);
         Cell8.setLayout(Cell8Layout);
@@ -245,7 +288,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel2.add(Cell8);
 
         Cell9.setBackground(new java.awt.Color(255, 255, 255));
-        Cell9.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        Cell9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout Cell9Layout = new javax.swing.GroupLayout(Cell9);
         Cell9.setLayout(Cell9Layout);
@@ -296,6 +339,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel Cell0;
     private javax.swing.JPanel Cell1;
     private javax.swing.JPanel Cell2;
+    private javax.swing.JPanel Cell3;
     private javax.swing.JPanel Cell4;
     private javax.swing.JPanel Cell5;
     private javax.swing.JPanel Cell6;
@@ -307,7 +351,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnDeleteConsumer;
     private javax.swing.JButton btnDeleteProducer;
     private javax.swing.JPanel bufferPanel;
-    private javax.swing.JPanel cell3;
     private javax.swing.JPanel controllerPanels;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
