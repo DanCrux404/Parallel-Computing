@@ -1,35 +1,26 @@
 package processes;
 
 import model.Buffer;
-import java.util.Random;
 
-public class Consumer extends Thread {
+// Consumer thread — empties buffer slots (FIFO)
+// Inherits from Process: id, state, sleep times, listener, stop logic
+public class Consumer extends Process {
 
     private final Buffer buffer;
-    private final int id;
-    // This variable can be read or written by multiple threads, no cache
-    private volatile boolean running = true;
-    private volatile ProcessState processState = ProcessState.RUNNING;
 
-    private final int minSleep = 1000; // Consumer is slower than Producer
-    private final int maxSleep = 2500;
-    private final Random random = new Random();
-
-    public enum ProcessState {
-        RUNNING, SLEEPING, WAITING
-    }
-
-    // Callback so UI knows consumer state
-    public interface ConsumerListener {
-        void onStateChanged(int consumerId, ProcessState state);
-    }
-
-    private ConsumerListener listener;
+    // Consumer is slower than Producer — creates interesting WAITING states
+    private static final int MIN_SLEEP = 1000; // Minimum ms between consumptions
+    private static final int MAX_SLEEP = 2500; // Maximum ms between consumptions
 
     public Consumer(int id, Buffer buffer) {
-        this.id = id;
+        super(id, MIN_SLEEP, MAX_SLEEP);
         this.buffer = buffer;
         setName("Consumer-" + id); // Thread name — useful for debug
+    }
+
+    @Override
+    protected String getProcessType() {
+        return "Consumer"; // Used for thread name — "Consumer-1"
     }
 
     // The heart of the thread — executes when .start() is called
@@ -59,23 +50,4 @@ public class Consumer extends Thread {
         }
         System.out.println("Consumer-" + id + " stopped.");
     }
-
-    private void setProcessState(ProcessState state) {
-        this.processState = state;
-        if (listener != null) {
-            listener.onStateChanged(id, state);
-        }
-    }
-
-    public void stopConsumer() {
-        running = false;  // While ends naturally
-        this.interrupt(); // If sleeping, wakes it with InterruptedException
-    }
-
-    public void setListener(ConsumerListener listener) {
-        this.listener = listener;
-    }
-
-    public int getConsumerId()            { return id; }
-    public ProcessState getProcessState() { return processState; }
 }

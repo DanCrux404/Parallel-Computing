@@ -1,38 +1,29 @@
 package processes;
 
 import java.awt.Color;
-import java.util.Random;
 import model.Buffer;
 
-public class Producer extends Thread {
+// Producer thread — fills buffer slots with its own color
+// Inherits from Process: id, state, sleep times, listener, stop logic
+public class Producer extends Process {
 
     private final Buffer buffer;
-    private final Color color;
-    private final int id;
-    // This variable can be read or written by multiple threads, no cache
-    private volatile boolean running = true;
-    private volatile ProcessState processState = ProcessState.RUNNING;
+    private final Color color; // Each producer has its own unique color
 
-    private final int minSleep = 500;  // Minimum ms between productions
-    private final int maxSleep = 1500; // Maximum ms between productions
-    private final Random random = new Random();
-
-    public enum ProcessState {
-        RUNNING, SLEEPING, WAITING
-    }
-
-    // Callback so UI knows producer state
-    public interface ProducerListener {
-        void onStateChanged(int producerId, ProcessState state);
-    }
-
-    private ProducerListener listener;
+    // Producer is faster than Consumer
+    private static final int MIN_SLEEP = 500;  // Minimum ms between productions
+    private static final int MAX_SLEEP = 1500; // Maximum ms between productions
 
     public Producer(int id, Buffer buffer, Color color) {
-        this.id = id;
+        super(id, MIN_SLEEP, MAX_SLEEP);
         this.buffer = buffer;
         this.color = color;
         setName("Producer-" + id); // Thread name — useful for debug
+    }
+
+    @Override
+    protected String getProcessType() {
+        return "Producer"; // Used for thread name — "Producer-1"
     }
 
     // The heart of the thread — executes when .start() is called
@@ -62,23 +53,7 @@ public class Producer extends Thread {
         System.out.println("Producer-" + id + " stopped.");
     }
 
-    private void setProcessState(ProcessState state) {
-        this.processState = state;
-        if (listener != null) {
-            listener.onStateChanged(id, state);
-        }
+    public Color getColor() {
+        return color;
     }
-
-    public void stopProducer() {
-        running = false;      // While ends naturally
-        this.interrupt();     // If sleeping, wakes it with InterruptedException
-    }
-
-    public void setListener(ProducerListener listener) {
-        this.listener = listener;
-    }
-
-    public Color getColor()               { return color; }
-    public int getProducerId()            { return id; }
-    public ProcessState getProcessState() { return processState; }
 }

@@ -10,6 +10,7 @@ import processes.Producer;
 import util.ColorManager;
 import windows.MainWindow;
 import windows.MonitorWindow;
+import processes.Process;
 
 // Neither threads touch Swing, nor UI knows about threads
 public class SimulationManager implements Buffer.BufferListener {
@@ -52,7 +53,7 @@ public class SimulationManager implements Buffer.BufferListener {
         monitorWindow.addProcess("P-" + id, "Producer", color);
         producer.setListener((producerId, state) -> {
             monitorWindow.updateState("P-" + producerId, state.name());
-            if (state == Producer.ProcessState.SLEEPING) {
+            if (state == Process.ProcessState.SLEEPING) {
                 monitorWindow.incrementCount("P-" + producerId);
             }
         });
@@ -71,8 +72,8 @@ public class SimulationManager implements Buffer.BufferListener {
 
         // LIFO — remove the last one added
         Producer last = producers.remove(producers.size() - 1);
-        last.stopProducer(); // Sets running=false and interrupts if sleeping
-        monitorWindow.removeProcess("P-" + last.getProducerId());
+        last.stopProcess(); // Sets running=false and interrupts if sleeping
+        monitorWindow.removeProcess("P-" + last.getProcessId());
         updateProducerCount();
     }
 
@@ -85,7 +86,7 @@ public class SimulationManager implements Buffer.BufferListener {
         monitorWindow.addProcess("C-" + id, "Consumer", null);
         consumer.setListener((consumerId, state) -> {
             monitorWindow.updateState("C-" + consumerId, state.name());
-            if (state == Consumer.ProcessState.SLEEPING) {
+            if (state == Process.ProcessState.SLEEPING) {
                 monitorWindow.incrementCount("C-" + consumerId);
             }
         });
@@ -103,8 +104,8 @@ public class SimulationManager implements Buffer.BufferListener {
 
         // LIFO — remove the last one added
         Consumer last = consumers.remove(consumers.size() - 1);
-        last.stopConsumer();
-        monitorWindow.removeProcess("C-" + last.getConsumerId());
+        last.stopProcess();
+        monitorWindow.removeProcess("C-" + last.getProcessId());
         updateConsumerCount();
     }
 
