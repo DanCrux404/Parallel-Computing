@@ -65,6 +65,7 @@ public class Buffer {
             wait(); // Empty buffer -> consumer is blocked here
         }
         // FIFO: always consume slot 0 then shift everything to the left
+        //We delete the 1st one an the others move
         System.out.println("Consumed -> slot 0, color was: " + slots[0]);
         for (int i = 0; i < count - 1; i++) {
             slots[i] = slots[i + 1];
