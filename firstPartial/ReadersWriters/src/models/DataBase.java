@@ -55,7 +55,7 @@ public class DataBase {
     // == READER exits if last reader, wake up waiting writers =======
     public synchronized void stopReading() {
         readerCount--;
-        System.out.println("Reader exited active readers: " + readerCount);
+        System.out.println("Reader exited - active readers: " + readerCount);
         if (readerCount == 0) {
             notifyAll(); // Last reader left writers can now enter
         }
@@ -101,7 +101,7 @@ public class DataBase {
 
         System.out.println("Reader-" + readerId + " reading: " + flight);
         //Reading takes time, but other readers can also read 
-        Thread.sleep(500); // Simulate reading time
+        Thread.sleep(1000); // Simulate reading time
 
         // Remove highlight
         if (listener != null) {

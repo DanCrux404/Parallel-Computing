@@ -82,6 +82,30 @@ public class MainWindow extends javax.swing.JFrame {
         flightsTable.getColumnModel().getColumn(COL_DEST).setPreferredWidth(100);
         flightsTable.getColumnModel().getColumn(COL_PRICE).setPreferredWidth(80);
         flightsTable.getColumnModel().getColumn(COL_STATUS).setPreferredWidth(100);
+
+        // ── Row highlight renderer — blues the row being read ──
+        DefaultTableCellRenderer highlightRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    javax.swing.JTable t, Object value, boolean selected,
+                    boolean focused, int row, int col) {
+                super.getTableCellRendererComponent(t, value, selected, focused, row, col);
+                if (row == highlightedRow) {
+                    setBackground(new Color(135, 206, 250)); // Light blue — being read
+                    setForeground(Color.BLACK);
+                } else {
+                    setBackground(Color.WHITE);
+                    setForeground(Color.BLACK);
+                }
+                return this;
+            }
+        };
+
+        // Apply to all columns except status — status has its own renderer
+        flightsTable.getColumnModel().getColumn(COL_ID).setCellRenderer(highlightRenderer);
+        flightsTable.getColumnModel().getColumn(COL_ORIGIN).setCellRenderer(highlightRenderer);
+        flightsTable.getColumnModel().getColumn(COL_DEST).setCellRenderer(highlightRenderer);
+        flightsTable.getColumnModel().getColumn(COL_PRICE).setCellRenderer(highlightRenderer);
     }
 
     // == PUBLIC METHODS for SimulationManager to call ================
@@ -112,8 +136,8 @@ public class MainWindow extends javax.swing.JFrame {
         if (index >= 0 && index < flightsModel.getRowCount()) {
             // Store highlight state in a hidden column or use row color trick
             // Simple approach — change the row via repaint trigger
-            flightsTable.repaint();
             highlightedRow = highlighting ? index : -1;
+            flightsTable.repaint();
         }
     }
 
