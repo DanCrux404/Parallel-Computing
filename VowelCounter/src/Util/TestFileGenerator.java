@@ -95,9 +95,9 @@ public class TestFileGenerator {
         //generateFiles(outputDir, 5, 100);
         // Medium test — 100 files of 500KB
         //generateFiles(outputDir, 100, 500);
-        // Heavy test — 1,000 files of 1MB each — uncomment for stress test
-        //generateFiles(outputDir, 1_000, 1000);
+        // Heavy test — 10,000 files of 1MB each — uncomment for stress test
+        generateFiles(outputDir, 10_000, 1000);
         // EXTREME test — 1,000,000 files MUEJEJEJEJE and 10MB
-        generateFiles(outputDir, 1_000_000, 10_000);
+        //generateFiles(outputDir, 1_000_000, 10_000);
     }
 }
