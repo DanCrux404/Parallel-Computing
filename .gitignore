@@ -19,3 +19,9 @@
 /thirdPartial/ClientSocket/nbproject/private/
 /thirdPartial/ClientSocket/build/
 /thirdPartial/ClientSocket/dist/
+/thirdPartial/ServerRMI/nbproject/private/
+/thirdPartial/ServerRMI/build/
+/thirdPartial/ClientRMI/nbproject/private/
+/thirdPartial/ClientRMI/build/
+/thirdPartial/ClientRMI/dist/
+/thirdPartial/ServerRMI/dist/
