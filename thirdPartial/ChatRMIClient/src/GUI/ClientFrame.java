@@ -12,6 +12,10 @@ public class ClientFrame extends javax.swing.JFrame {
     public ClientFrame() {
         initComponents();
         manager = new ClientManager(this);
+        
+        lstUsers.setListData(
+        new String[0]
+        );
     }
 
     public void addMessage(String message) {

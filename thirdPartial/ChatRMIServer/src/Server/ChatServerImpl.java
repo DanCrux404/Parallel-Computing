@@ -8,6 +8,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 import Controller.ServerManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Chat Server Implementation UnicastRemoteObject it is used to export a remote
@@ -79,5 +81,14 @@ public class ChatServerImpl extends UnicastRemoteObject
                 );
             }
         }
+    }
+
+    @Override
+    public List<String> getConnectedUsers()
+            throws RemoteException {
+
+        return new ArrayList<>(
+                clients.keySet()
+        );
     }
 }

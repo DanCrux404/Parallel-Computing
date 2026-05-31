@@ -43,6 +43,10 @@ public class ClientManager {
 
             server.registerClient(username, client);
 
+            frame.updateUsers(
+                server.getConnectedUsers()
+            );
+
             frame.addMessage("Connected as " + username);
 
         } catch (Exception e) {

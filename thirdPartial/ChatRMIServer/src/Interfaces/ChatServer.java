@@ -2,6 +2,7 @@ package Interfaces;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Remote Server Interface
@@ -15,7 +16,7 @@ public interface ChatServer extends Remote {
      * @param username Client name
      * @throws RemoteException
      */
-    void registerClient(String username,ChatClient client)
+    void registerClient(String username, ChatClient client)
             throws RemoteException;
 
     /**
@@ -26,5 +27,8 @@ public interface ChatServer extends Remote {
      * @throws RemoteException
      */
     void broadcastMessage(String username, String message)
+            throws RemoteException;
+
+    List<String> getConnectedUsers()
             throws RemoteException;
 }
