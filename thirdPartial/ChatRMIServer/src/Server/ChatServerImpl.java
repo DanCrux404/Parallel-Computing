@@ -44,6 +44,23 @@ public class ChatServerImpl extends UnicastRemoteObject
                 client
         );
 
+        List<String> users
+                = getConnectedUsers();
+
+        for (ChatClient c : clients.values()) {
+
+            try {
+
+                c.updateUserList(users);
+
+            } catch (RemoteException e) {
+
+                System.out.println(
+                        e.getMessage()
+                );
+            }
+        }
+
         manager.logMessage(
                 username
                 + " connected."
@@ -90,5 +107,13 @@ public class ChatServerImpl extends UnicastRemoteObject
         return new ArrayList<>(
                 clients.keySet()
         );
+    }
+
+    @Override
+    public ChatClient getClient(
+            String username
+    ) throws RemoteException {
+
+        return clients.get(username);
     }
 }

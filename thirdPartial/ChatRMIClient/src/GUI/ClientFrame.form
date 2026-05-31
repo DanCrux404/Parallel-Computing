@@ -98,6 +98,9 @@
               </StringArray>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="lstUsersValueChanged"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
@@ -112,7 +115,7 @@
       </Constraints>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-        <Property name="columns" type="int" value="2"/>
+        <Property name="columns" type="int" value="4"/>
         <Property name="rows" type="int" value="1"/>
       </Layout>
       <SubComponents>
@@ -127,6 +130,19 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSendActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lblMode">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Broadcast Mode"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnClearSelection">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Clear Selection"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnClearSelectionActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

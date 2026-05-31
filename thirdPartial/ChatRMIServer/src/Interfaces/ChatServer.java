@@ -31,4 +31,9 @@ public interface ChatServer extends Remote {
 
     List<String> getConnectedUsers()
             throws RemoteException;
+
+    //Find remote object, the client
+    ChatClient getClient(
+            String username
+    ) throws RemoteException;
 }

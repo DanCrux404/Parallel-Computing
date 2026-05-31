@@ -6,6 +6,7 @@ import Interfaces.ChatServer;
 import Interfaces.ChatClient;
 
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 
 public class ClientManager {
 
@@ -43,8 +44,13 @@ public class ClientManager {
 
             server.registerClient(username, client);
 
+            // DEBUG
+            System.out.println(
+                    server.getConnectedUsers()
+            );
+
             frame.updateUsers(
-                server.getConnectedUsers()
+                    server.getConnectedUsers()
             );
 
             frame.addMessage("Connected as " + username);
@@ -59,19 +65,51 @@ public class ClientManager {
 
         try {
 
-            String message = frame.getMessage();
+            String message
+                    = frame.getMessage();
 
             if (message.isEmpty()) {
                 return;
             }
 
-            server.broadcastMessage(username, message);
+            if (frame.isPrivateMessage()) {
+
+                String targetUser
+                        = frame.getSelectedUser();
+
+                ChatClient target
+                        = server.getClient(
+                                targetUser
+                        );
+
+                target.receivePrivateMessage(
+                        username,
+                        message
+                );
+
+                frame.addMessage(
+                        "[TO "
+                        + targetUser
+                        + "] "
+                        + message
+                );
+
+            } else {
+
+                server.broadcastMessage(
+                        username,
+                        message
+                );
+            }
 
             frame.clearMessage();
 
-        } catch (Exception e) {
+        } catch (RemoteException e) {
 
-            frame.addMessage("Send error: " + e.getMessage());
+            frame.addMessage(
+                    "Error: "
+                    + e.getMessage()
+            );
         }
     }
 
@@ -83,5 +121,18 @@ public class ClientManager {
     public void updateUsers(java.util.List<String> users) {
 
         frame.updateUsers(users);
+    }
+
+    public void receivePrivateMessage(
+            String username,
+            String message
+    ) {
+
+        frame.addMessage(
+                "[PRIVATE] "
+                + username
+                + ": "
+                + message
+        );
     }
 }

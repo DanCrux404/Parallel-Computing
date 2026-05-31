@@ -6,15 +6,16 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ClientFrame.class.getName());
     private ClientManager manager;
+
     /**
      * Creates new form ClientFrame
      */
     public ClientFrame() {
         initComponents();
         manager = new ClientManager(this);
-        
+
         lstUsers.setListData(
-        new String[0]
+                new String[0]
         );
     }
 
@@ -23,10 +24,16 @@ public class ClientFrame extends javax.swing.JFrame {
         txtChat.append(message + "\n");
     }
 
+    public void updateUsers(
+            java.util.List<String> users
+    ) {
 
-    public void updateUsers(java.util.List<String> users) {
+        System.out.println(
+                "UI UPDATE -> " + users
+        );
 
-        lstUsers.setListData(users.toArray(String[]::new)
+        lstUsers.setListData(
+                users.toArray(String[]::new)
         );
     }
 
@@ -43,6 +50,16 @@ public class ClientFrame extends javax.swing.JFrame {
     public void clearMessage() {
 
         txtMessage.setText("");
+    }
+
+    public String getSelectedUser() {
+
+        return lstUsers.getSelectedValue();
+    }
+
+    public boolean isPrivateMessage() {
+
+        return lstUsers.getSelectedValue() != null;
     }
 
     /**
@@ -64,6 +81,8 @@ public class ClientFrame extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         txtMessage = new javax.swing.JTextField();
         btnSend = new javax.swing.JButton();
+        lblMode = new javax.swing.JLabel();
+        btnClearSelection = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(800, 500));
@@ -91,11 +110,12 @@ public class ClientFrame extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        lstUsers.addListSelectionListener(this::lstUsersValueChanged);
         jScrollPane2.setViewportView(lstUsers);
 
         getContentPane().add(jScrollPane2, java.awt.BorderLayout.LINE_END);
 
-        jPanel2.setLayout(new java.awt.GridLayout(1, 2));
+        jPanel2.setLayout(new java.awt.GridLayout(1, 4));
 
         txtMessage.setText("Message");
         jPanel2.add(txtMessage);
@@ -103,6 +123,13 @@ public class ClientFrame extends javax.swing.JFrame {
         btnSend.setText("Send");
         btnSend.addActionListener(this::btnSendActionPerformed);
         jPanel2.add(btnSend);
+
+        lblMode.setText("Broadcast Mode");
+        jPanel2.add(lblMode);
+
+        btnClearSelection.setText("Clear Selection");
+        btnClearSelection.addActionListener(this::btnClearSelectionActionPerformed);
+        jPanel2.add(btnClearSelection);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
@@ -118,6 +145,31 @@ public class ClientFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         manager.sendMessage();
     }//GEN-LAST:event_btnSendActionPerformed
+
+    private void lstUsersValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstUsersValueChanged
+        // TODO add your handling code here:
+        String selectedUser
+                = lstUsers.getSelectedValue();
+
+        if (selectedUser == null) {
+
+            lblMode.setText(
+                    "Broadcast Mode"
+            );
+
+        } else {
+
+            lblMode.setText(
+                    "Private: "
+                    + selectedUser
+            );
+        }
+    }//GEN-LAST:event_lstUsersValueChanged
+
+    private void btnClearSelectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearSelectionActionPerformed
+        // TODO add your handling code here:
+        lstUsers.clearSelection();
+    }//GEN-LAST:event_btnClearSelectionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -145,12 +197,14 @@ public class ClientFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClearSelection;
     private javax.swing.JButton btnConnect;
     private javax.swing.JButton btnSend;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblMode;
     private javax.swing.JList<String> lstUsers;
     private javax.swing.JTextArea txtChat;
     private javax.swing.JTextField txtMessage;
