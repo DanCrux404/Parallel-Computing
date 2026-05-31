@@ -25,3 +25,8 @@
 /thirdPartial/ClientRMI/build/
 /thirdPartial/ClientRMI/dist/
 /thirdPartial/ServerRMI/dist/
+/thirdPartial/ChatRMI/nbproject/private/
+/thirdPartial/ChatRMIServer/nbproject/private/
+/thirdPartial/ChatRMIClient/nbproject/private/
+/thirdPartial/ChatRMIServer/build/
+/thirdPartial/ChatRMIClient/build/
