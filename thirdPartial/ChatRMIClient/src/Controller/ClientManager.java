@@ -4,7 +4,11 @@ import Client.ChatClientImpl;
 import GUI.ClientFrame;
 import Interfaces.ChatServer;
 import Interfaces.ChatClient;
+import Model.PeerInfo;
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +20,7 @@ public class ClientManager {
     private ChatServer server;
     private ChatClient client;
     private String username;
-    private Map<String, ChatClient> peers;
+    private Map<String, PeerInfo> peers;
 
     public ClientManager(ClientFrame frame) {
         this.frame = frame;
@@ -30,46 +34,100 @@ public class ClientManager {
             username = frame.getUsername();
 
             if (username.isEmpty()) {
-                frame.addMessage("Username cannot be empty");
+
+                frame.addMessage(
+                        "Username cannot be empty"
+                );
+
                 return;
             }
 
+            // Connect to central server
             server = (ChatServer) Naming.lookup(
                     "//" + host + ":" + port + "/ChatService"
             );
 
-            try {
-                client = new ChatClientImpl(this);
-            } catch (Exception e) {
+            // Create local remote object
+            client = new ChatClientImpl(this);
 
-                frame.addMessage("Client init error: " + e.getMessage());
-            }
+            // Temporary port for this peer
+            int peerPort = Integer.parseInt(
+                    javax.swing.JOptionPane.showInputDialog(
+                            frame,
+                            "Peer Port:"
+                    )
+            );
 
-            server.registerClient(username, client);
+            String ip
+                    = java.net.InetAddress
+                            .getLocalHost()
+                            .getHostAddress();
 
-            // DEBUG
+            System.setProperty(
+                    "java.rmi.server.hostname",
+                    ip
+            );
+
+            // Create local RMI Registry
+            LocateRegistry.createRegistry(
+                    peerPort
+            );
+
+            // Publish this client as a remote object
+            Naming.rebind(
+                    "//localhost:"
+                    + peerPort
+                    + "/"
+                    + username,
+                    client
+            );
+
+            // Send peer information to server
+            PeerInfo peer
+                    = new PeerInfo(
+                            username,
+                            ip,
+                            peerPort
+                    );
+
+            server.registerClient(
+                    peer,
+                    client
+            );
+
+            Map<String, PeerInfo> peersFromServer
+                    = server.getPeers();
+
             System.out.println(
-                    server.getConnectedUsers()
+                    "SERVER PEERS -> "
+                    + peersFromServer.keySet()
             );
 
-            frame.updateUsers(
-                    server.getConnectedUsers()
+            updatePeers(
+                    peersFromServer
             );
 
-            frame.addMessage("Connected as " + username);
+            frame.addMessage(
+                    "Connected as "
+                    + username
+            );
 
         } catch (Exception e) {
 
-            frame.addMessage("Connection error: " + e.getMessage());
+            e.printStackTrace();
+
+            frame.addMessage(
+                    "Connection error: "
+                    + e.getMessage()
+            );
         }
     }
 
-    public void sendMessage() {
+    public void sendMessage() throws MalformedURLException, NotBoundException {
 
         try {
 
-            String message
-                    = frame.getMessage();
+            String message = frame.getMessage();
 
             if (message.isEmpty()) {
                 return;
@@ -77,12 +135,18 @@ public class ClientManager {
 
             if (frame.isPrivateMessage()) {
 
-                String targetUser
-                        = frame.getSelectedUser();
+                String targetUser = frame.getSelectedUser();
+
+                PeerInfo targetInfo = peers.get(targetUser);
 
                 ChatClient target
-                        = peers.get(
-                                targetUser
+                        = (ChatClient) Naming.lookup(
+                                "//"
+                                + targetInfo.getHost()
+                                + ":"
+                                + targetInfo.getPort()
+                                + "/"
+                                + targetInfo.getUsername()
                         );
 
                 target.receivePrivateMessage(
@@ -141,8 +205,7 @@ public class ClientManager {
 
     //Dicctionary of each users to P2P comunication
     public void updatePeers(
-            Map<String, ChatClient> peers
-    ) {
+            Map<String, PeerInfo> peers) {
 
         this.peers.clear();
 

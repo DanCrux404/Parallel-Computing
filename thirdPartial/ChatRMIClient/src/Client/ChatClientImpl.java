@@ -2,9 +2,9 @@ package Client;
 
 import Controller.ClientManager;
 import Interfaces.ChatClient;
+import Model.PeerInfo;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Map;
 
 public class ChatClientImpl extends UnicastRemoteObject implements ChatClient {
@@ -36,7 +36,7 @@ public class ChatClientImpl extends UnicastRemoteObject implements ChatClient {
 
     @Override
     public void updatePeers(
-            Map<String, ChatClient> peers
+            Map<String, PeerInfo> peers
     )
             throws RemoteException {
 

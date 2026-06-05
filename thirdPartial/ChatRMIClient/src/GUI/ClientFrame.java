@@ -1,6 +1,8 @@
 package GUI;
 
 import Controller.ClientManager;
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
 
 public class ClientFrame extends javax.swing.JFrame {
 
@@ -138,12 +140,16 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         // TODO add your handling code here:
-        manager.connect("192.168.137.202", 1234);
+        manager.connect("192.168.0.160", 1234);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
-        // TODO add your handling code here:
-        manager.sendMessage();
+        try {
+            // TODO add your handling code here:
+            manager.sendMessage();
+        } catch (MalformedURLException | NotBoundException ex) {
+            System.getLogger(ClientFrame.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
     }//GEN-LAST:event_btnSendActionPerformed
 
     private void lstUsersValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstUsersValueChanged

@@ -1,8 +1,8 @@
 package Interfaces;
 
+import Model.PeerInfo;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,9 +25,9 @@ public interface ChatClient extends Remote {
             String message
     )
             throws RemoteException;
-    
+
     void updatePeers(
-            Map<String, ChatClient> peers
+            Map<String, PeerInfo> peers
     )
             throws RemoteException;
 }

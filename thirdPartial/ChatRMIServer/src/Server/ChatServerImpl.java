@@ -5,9 +5,11 @@ import Interfaces.ChatServer;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.rmi.Naming;
 import java.util.HashMap;
 import java.util.Map;
 import Controller.ServerManager;
+import Model.PeerInfo;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class ChatServerImpl extends UnicastRemoteObject
         implements ChatServer {
 
     private Map<String, ChatClient> clients;
+    private Map<String, PeerInfo> peers;
     private ServerManager manager;
 
     public ChatServerImpl(
@@ -29,29 +32,34 @@ public class ChatServerImpl extends UnicastRemoteObject
         super();
 
         this.manager = manager;
-
         clients = new HashMap<>();
+        peers = new HashMap<>();
     }
 
     @Override
     public void registerClient(
-            String username,
+            PeerInfo peer,
             ChatClient client
-    ) throws RemoteException {
+    )
+            throws RemoteException {
 
-        clients.put(
-                username,
-                client
+        peers.put(
+                peer.getUsername(),
+                peer
         );
 
-        Map<String, ChatClient> peers
-                = new HashMap<>(clients);
+        clients.put(
+                peer.getUsername(),
+                client
+        );
 
         for (ChatClient c : clients.values()) {
 
             try {
 
-                c.updatePeers(peers);
+                c.updatePeers(
+                        new HashMap<>(peers)
+                );
 
             } catch (RemoteException e) {
 
@@ -62,28 +70,39 @@ public class ChatServerImpl extends UnicastRemoteObject
         }
 
         manager.logMessage(
-                username
+                peer.getUsername()
                 + " connected."
         );
 
         manager.updateClientCount(
-                clients.size()
+                peers.size()
         );
     }
 
     @Override
-    public void broadcastMessage(String username,
-            String message)
-            throws RemoteException {
+    public void broadcastMessage(
+            String username,
+            String message
+    ) throws RemoteException {
 
         manager.logMessage(
                 "[" + username + "] "
                 + message
         );
 
-        for (ChatClient client : clients.values()) {
+        for (PeerInfo peer : peers.values()) {
 
             try {
+
+                ChatClient client
+                        = (ChatClient) Naming.lookup(
+                                "//"
+                                + peer.getHost()
+                                + ":"
+                                + peer.getPort()
+                                + "/"
+                                + peer.getUsername()
+                        );
 
                 client.receiveMessage(
                         username,
@@ -105,7 +124,14 @@ public class ChatServerImpl extends UnicastRemoteObject
             throws RemoteException {
 
         return new ArrayList<>(
-                clients.keySet()
+                peers.keySet()
         );
+    }
+
+    @Override
+    public Map<String, PeerInfo> getPeers()
+            throws RemoteException {
+
+        return new HashMap<>(peers);
     }
 }

@@ -1,8 +1,10 @@
 package Interfaces;
 
+import Model.PeerInfo;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Remote Server Interface
@@ -12,11 +14,13 @@ public interface ChatServer extends Remote {
     /**
      * Registers a new client
      *
-     * @param client Client reference
-     * @param username Client name
+     * @param peer info for a peer
      * @throws RemoteException
      */
-    void registerClient(String username, ChatClient client)
+    void registerClient(
+            PeerInfo peer,
+            ChatClient client
+    )
             throws RemoteException;
 
     /**
@@ -30,6 +34,9 @@ public interface ChatServer extends Remote {
             throws RemoteException;
 
     List<String> getConnectedUsers()
+            throws RemoteException;
+
+    Map<String, PeerInfo> getPeers()
             throws RemoteException;
 
 }
