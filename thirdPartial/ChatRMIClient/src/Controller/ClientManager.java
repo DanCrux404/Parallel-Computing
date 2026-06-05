@@ -5,6 +5,7 @@ import GUI.ClientFrame;
 import Interfaces.ChatServer;
 import Interfaces.ChatClient;
 import Model.PeerInfo;
+import java.awt.HeadlessException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -13,6 +14,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JOptionPane;
 
 public class ClientManager {
 
@@ -48,7 +50,7 @@ public class ClientManager {
             );
 
             // Create local remote object
-            client = new ChatClientImpl(this);
+            
 
             // Temporary port for this peer
             int peerPort = Integer.parseInt(
@@ -58,15 +60,17 @@ public class ClientManager {
                     )
             );
 
-            String ip
-                    = java.net.InetAddress
-                            .getLocalHost()
-                            .getHostAddress();
+            String ip = JOptionPane.showInputDialog(
+                    frame,
+                    "Your IP:"
+            );
 
             System.setProperty(
                     "java.rmi.server.hostname",
                     ip
             );
+
+            client = new ChatClientImpl(this);
 
             // Create local RMI Registry
             LocateRegistry.createRegistry(
@@ -112,14 +116,8 @@ public class ClientManager {
                     + username
             );
 
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-            frame.addMessage(
-                    "Connection error: "
-                    + e.getMessage()
-            );
+        } catch (HeadlessException | NumberFormatException | MalformedURLException | NotBoundException | RemoteException ex) {
+            System.getLogger(ClientManager.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
     }
 
@@ -138,6 +136,16 @@ public class ClientManager {
                 String targetUser = frame.getSelectedUser();
 
                 PeerInfo targetInfo = peers.get(targetUser);
+
+                System.out.println(
+                        "TARGET HOST = "
+                        + targetInfo.getHost()
+                );
+
+                System.out.println(
+                        "TARGET PORT = "
+                        + targetInfo.getPort()
+                );
 
                 ChatClient target
                         = (ChatClient) Naming.lookup(

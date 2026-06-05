@@ -53,6 +53,14 @@ public class ChatServerImpl extends UnicastRemoteObject
                 client
         );
 
+        System.out.println(
+                peer.getUsername()
+                + " -> "
+                + peer.getHost()
+                + ":"
+                + peer.getPort()
+        );
+
         for (ChatClient c : clients.values()) {
 
             try {
