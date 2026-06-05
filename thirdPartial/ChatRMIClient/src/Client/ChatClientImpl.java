@@ -5,6 +5,7 @@ import Interfaces.ChatClient;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 public class ChatClientImpl extends UnicastRemoteObject implements ChatClient {
 
@@ -34,11 +35,11 @@ public class ChatClientImpl extends UnicastRemoteObject implements ChatClient {
     }
 
     @Override
-    public void updateUserList(
-            List<String> users
+    public void updatePeers(
+            Map<String, ChatClient> peers
     )
             throws RemoteException {
 
-        manager.updateUsers(users);
+        manager.updatePeers(peers);
     }
 }

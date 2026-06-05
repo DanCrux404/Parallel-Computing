@@ -9,13 +9,18 @@ public class ChatRMIServer {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        try {
+            java.awt.EventQueue.invokeLater(() -> {
+                ServerFrame frame = new ServerFrame();
 
-        java.awt.EventQueue.invokeLater(() -> {
-            ServerFrame frame = new ServerFrame();
-            
-            frame.setLocationRelativeTo(null);
-            
-            frame.setVisible(true);
-        });
+                frame.setLocationRelativeTo(null);
+
+                frame.setVisible(true);
+            });
+        }catch(Exception e)
+        {
+            System.out.println("Error: " + e);
+        }
+
     }
 }

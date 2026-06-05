@@ -4,20 +4,23 @@ import Client.ChatClientImpl;
 import GUI.ClientFrame;
 import Interfaces.ChatServer;
 import Interfaces.ChatClient;
-
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientManager {
 
     private ClientFrame frame;
     private ChatServer server;
     private ChatClient client;
-
     private String username;
+    private Map<String, ChatClient> peers;
 
     public ClientManager(ClientFrame frame) {
         this.frame = frame;
+        peers = new HashMap<>();
     }
 
     public void connect(String host, int port) {
@@ -78,7 +81,7 @@ public class ClientManager {
                         = frame.getSelectedUser();
 
                 ChatClient target
-                        = server.getClient(
+                        = peers.get(
                                 targetUser
                         );
 
@@ -133,6 +136,20 @@ public class ClientManager {
                 + username
                 + ": "
                 + message
+        );
+    }
+
+    //Dicctionary of each users to P2P comunication
+    public void updatePeers(
+            Map<String, ChatClient> peers
+    ) {
+
+        this.peers.clear();
+
+        this.peers.putAll(peers);
+
+        frame.updateUsers(
+                new ArrayList<>(peers.keySet())
         );
     }
 }

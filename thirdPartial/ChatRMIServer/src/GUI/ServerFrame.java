@@ -43,7 +43,7 @@ public class ServerFrame extends javax.swing.JFrame {
 
             System.setProperty(
                     "java.rmi.server.hostname",
-                    "192.168.0.160"
+                    "192.168.137.202"
             );
 
             LocateRegistry.createRegistry(port);
@@ -55,7 +55,7 @@ public class ServerFrame extends javax.swing.JFrame {
                     = new ChatServerImpl(manager);
 
             Naming.rebind(
-                    "//192.168.0.160:"
+                    "//192.168.137.202:"
                     + port
                     + "/ChatService",
                     server

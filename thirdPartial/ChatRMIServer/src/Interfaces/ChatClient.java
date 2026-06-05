@@ -3,6 +3,7 @@ package Interfaces;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Remote Client Interface
@@ -27,6 +28,11 @@ public interface ChatClient extends Remote {
 
     void updateUserList(
             List<String> users
+    )
+            throws RemoteException;
+
+    void updatePeers(
+            Map<String, ChatClient> peers
     )
             throws RemoteException;
 }

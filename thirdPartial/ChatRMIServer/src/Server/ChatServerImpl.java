@@ -44,14 +44,14 @@ public class ChatServerImpl extends UnicastRemoteObject
                 client
         );
 
-        List<String> users
-                = getConnectedUsers();
+        Map<String, ChatClient> peers
+                = new HashMap<>(clients);
 
         for (ChatClient c : clients.values()) {
 
             try {
 
-                c.updateUserList(users);
+                c.updatePeers(peers);
 
             } catch (RemoteException e) {
 
@@ -107,13 +107,5 @@ public class ChatServerImpl extends UnicastRemoteObject
         return new ArrayList<>(
                 clients.keySet()
         );
-    }
-
-    @Override
-    public ChatClient getClient(
-            String username
-    ) throws RemoteException {
-
-        return clients.get(username);
     }
 }

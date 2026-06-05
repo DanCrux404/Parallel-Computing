@@ -32,7 +32,4 @@ public interface ChatServer extends Remote {
     List<String> getConnectedUsers()
             throws RemoteException;
 
-    ChatClient getClient(
-            String username
-    ) throws RemoteException;
 }
