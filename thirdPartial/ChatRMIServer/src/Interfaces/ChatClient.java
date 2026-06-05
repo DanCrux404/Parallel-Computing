@@ -26,11 +26,6 @@ public interface ChatClient extends Remote {
     )
             throws RemoteException;
 
-    void updateUserList(
-            List<String> users
-    )
-            throws RemoteException;
-
     void updatePeers(
             Map<String, ChatClient> peers
     )
