@@ -66,6 +66,10 @@ public class MainWindow extends javax.swing.JFrame {
                 null, // max, no limit(Until it crashes MUEJEJEJEJEEJ)
                 1 // increment
         ));
+
+        btnParallel.addActionListener(e
+                -> counterManager.runParallel((int) spnThreads.getValue())
+        );
     }
 
     // == File chooser — opens dialog to select multiple files ========
@@ -213,6 +217,15 @@ public class MainWindow extends javax.swing.JFrame {
         spnThreads.setEnabled(enabled);
     }
 
+    public void setParallelTime(long ms) {
+        lblParallelValue.setText(ms + " ms");
+    }
+    
+    public void setParallelSpeedup(String text)
+    {
+        lblParallelValue.setText(text);
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -229,15 +242,18 @@ public class MainWindow extends javax.swing.JFrame {
         spnThreads = new javax.swing.JSpinner();
         btnSequential = new javax.swing.JButton();
         btnConcurrent = new javax.swing.JButton();
+        btnParallel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         FilesTable = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         lblSequiential = new javax.swing.JLabel();
         lblConcurrent = new javax.swing.JLabel();
+        lblParallel = new javax.swing.JLabel();
         lblEfficiency = new javax.swing.JLabel();
         lblSpeedUp = new javax.swing.JLabel();
         lblSequentialNumb = new javax.swing.JLabel();
         lblConcurrentNumb = new javax.swing.JLabel();
+        lblParallelValue = new javax.swing.JLabel();
         lblEfficiencyNumb = new javax.swing.JLabel();
         lblSpeedupNumb = new javax.swing.JLabel();
 
@@ -265,7 +281,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
-        jPanel2.setLayout(new java.awt.GridLayout(4, 1));
+        jPanel2.setLayout(new java.awt.GridLayout(5, 1));
 
         btnUpload.setText("Upload files");
         jPanel2.add(btnUpload);
@@ -277,6 +293,9 @@ public class MainWindow extends javax.swing.JFrame {
 
         btnConcurrent.setText("Run Concurrent");
         jPanel2.add(btnConcurrent);
+
+        btnParallel.setText("Run Parallel");
+        jPanel2.add(btnParallel);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.LINE_START);
 
@@ -295,13 +314,16 @@ public class MainWindow extends javax.swing.JFrame {
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jPanel3.setLayout(new java.awt.GridLayout(2, 4));
+        jPanel3.setLayout(new java.awt.GridLayout(2, 5));
 
         lblSequiential.setText("Sequential");
         jPanel3.add(lblSequiential);
 
         lblConcurrent.setText("Concurrent");
         jPanel3.add(lblConcurrent);
+
+        lblParallel.setText("Parallel");
+        jPanel3.add(lblParallel);
 
         lblEfficiency.setText("Efficiency");
         jPanel3.add(lblEfficiency);
@@ -314,6 +336,9 @@ public class MainWindow extends javax.swing.JFrame {
 
         lblConcurrentNumb.setText("0");
         jPanel3.add(lblConcurrentNumb);
+
+        lblParallelValue.setText("0");
+        jPanel3.add(lblParallelValue);
 
         lblEfficiencyNumb.setText("0");
         jPanel3.add(lblEfficiencyNumb);
@@ -354,6 +379,7 @@ public class MainWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable FilesTable;
     private javax.swing.JButton btnConcurrent;
+    private javax.swing.JButton btnParallel;
     private javax.swing.JButton btnSequential;
     private javax.swing.JButton btnUpload;
     private javax.swing.JPanel jPanel1;
@@ -366,6 +392,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblEfficiencyNumb;
     private javax.swing.JLabel lblFiles;
     private javax.swing.JLabel lblFilesNumb;
+    private javax.swing.JLabel lblParallel;
+    private javax.swing.JLabel lblParallelValue;
     private javax.swing.JLabel lblSequentialNumb;
     private javax.swing.JLabel lblSequiential;
     private javax.swing.JLabel lblSpeedUp;

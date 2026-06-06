@@ -32,3 +32,5 @@
 /thirdPartial/ChatRMIClient/build/
 /thirdPartial/ChatRMIClient/dist/
 /thirdPartial/ChatRMIServer/dist/
+/thirdPartial/VowelCounterClient/nbproject/private/
+/thirdPartial/VowelCounterClient/build/

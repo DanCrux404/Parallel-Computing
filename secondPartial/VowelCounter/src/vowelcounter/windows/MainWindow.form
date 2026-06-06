@@ -76,7 +76,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
         <Property name="columns" type="int" value="1"/>
-        <Property name="rows" type="int" value="4"/>
+        <Property name="rows" type="int" value="5"/>
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JButton" name="btnUpload">
@@ -95,6 +95,11 @@
         <Component class="javax.swing.JButton" name="btnConcurrent">
           <Properties>
             <Property name="text" type="java.lang.String" value="Run Concurrent"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnParallel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Run Parallel"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -130,7 +135,7 @@
       </Constraints>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
-        <Property name="columns" type="int" value="4"/>
+        <Property name="columns" type="int" value="5"/>
         <Property name="rows" type="int" value="2"/>
       </Layout>
       <SubComponents>
@@ -142,6 +147,11 @@
         <Component class="javax.swing.JLabel" name="lblConcurrent">
           <Properties>
             <Property name="text" type="java.lang.String" value="Concurrent"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lblParallel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Parallel"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lblEfficiency">
@@ -160,6 +170,11 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lblConcurrentNumb">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="0"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lblParallelValue">
           <Properties>
             <Property name="text" type="java.lang.String" value="0"/>
           </Properties>

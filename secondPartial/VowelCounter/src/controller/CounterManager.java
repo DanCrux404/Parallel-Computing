@@ -9,6 +9,8 @@ import model.AppStatus;
 import model.VowelResult;
 import processing.ConcurrentCounter;
 import processing.SequentialCounter;
+import rmi.ParallelCounter;
+import rmi.RMIServer;
 import vowelcounter.windows.MainWindow;
 import vowelcounter.windows.StatsWindow;
 
@@ -33,19 +35,100 @@ public class CounterManager {
     // Saved times for comparison
     private long sequentialTime = 0;
     private long concurrentTime = 0;
+    private long parallelTime = 0;
 
-    // Counters — reused across runs
+    // Counters reused across runs
     private final SequentialCounter sequentialCounter = new SequentialCounter();
     private final ConcurrentCounter concurrentCounter = new ConcurrentCounter();
+
+    //Counters for parallel
+    private final RMIServer rmiServer = new RMIServer();
+    private final ParallelCounter parallelCounter = new ParallelCounter(rmiServer);
 
     public CounterManager(MainWindow mainWindow, StatsWindow statsWindow) {
         this.mainWindow = mainWindow;
         this.statsWindow = statsWindow;
 
         setupListeners();
+
+// Start RMI server — wait for clients
+        try {
+            rmiServer.setListener(new RMIServer.ServerListener() {
+                @Override
+                public void onClientConnected(int count) {
+                    SwingUtilities.invokeLater(()
+                            -> mainWindow.setStatus(AppStatus.IDLE)
+                    );
+                    System.out.println("Clients connected: " + count);
+                }
+
+                @Override
+                public void onClientDisconnected(int count) {
+                    System.out.println("Clients connected: " + count);
+                }
+
+                @Override
+                public void onReadyToProcess(int count) {
+                }
+            });
+            rmiServer.start();
+        } catch (Exception e) {
+            System.out.println("RMI Server failed: " + e.getMessage());
+        }
+
+        // Setup parallel listener
+        parallelCounter.setListener(new ParallelCounter.ParallelListener() {
+            @Override
+            public void onPartitionAssigned(String nodeId, int fileCount) {
+                System.out.println(nodeId + " → " + fileCount + " files");
+            }
+
+            @Override
+            public void onNodeFinished(String nodeId, VowelResult[] results) {
+                SwingUtilities.invokeLater(() -> {
+                    for (VowelResult r : results) {
+                        statsWindow.updateStats(r);
+                    }
+                });
+            }
+
+            @Override
+            public void onAllFinished(long totalTime) {
+                SwingUtilities.invokeLater(() -> {
+                    mainWindow.setParallelTime(totalTime);
+                    mainWindow.setStatus(AppStatus.DONE);
+                    mainWindow.setButtonsEnabled(true);
+                    updateComparison();
+                });
+            }
+        });
     }
-    
-// == Setup listeners for both counters ============================
+
+    public void runParallel(int threadsPerNode) {
+        if (loadedFiles.isEmpty()) {
+            return;
+        }
+        if (rmiServer.getClientCount() == 0) {
+            System.out.println("No clients connected!");
+            return;
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            mainWindow.setButtonsEnabled(false);
+            mainWindow.setStatus(AppStatus.RUNNING_CONCURRENT);
+            mainWindow.resetFileStatuses();
+            statsWindow.clearStats();
+        });
+
+        new Thread(() -> {
+            try {
+                parallelCounter.process(loadedFiles, threadsPerNode);
+            } catch (Exception e) {
+                System.out.println("Parallel error: " + e.getMessage());
+            }
+        }, "Parallel-Runner").start();
+    }
+    // == Setup listeners for both counters ============================
     // Same callback pattern as Buffer/Database in previous projects
 
     private void setupListeners() {
@@ -111,7 +194,7 @@ public class CounterManager {
         });
     }
 
-    // ── Called by btnUpload ───────────────────────────────────────
+    // == Called by btnUpload =============================
     public void loadFiles(List<File> files) {
         loadedFiles = files;
         lastResults.clear();
@@ -129,7 +212,7 @@ public class CounterManager {
         });
     }
 
-    // ── Called by btnSequential ───────────────────────────────────
+    // == Called by btnSequential =============================
     // Runs on a background thread — never block the EDT!
     public void runSequential() {
         if (loadedFiles.isEmpty()) {
@@ -152,7 +235,7 @@ public class CounterManager {
         }, "Sequential-Runner").start();
     }
 
-    // ── Called by btnConcurrent ───────────────────────────────────
+    // == Called by btnConcurrent ======================
     public void runConcurrent(int threadCount) {
         if (loadedFiles.isEmpty()) {
             return;
@@ -172,22 +255,23 @@ public class CounterManager {
         }, "Concurrent-Runner").start();
     }
 
-    // ── Update comparison section — only if both times available ──
+    // == Update comparison section only if both times available ==
     private void updateComparison() {
-        if (sequentialTime == 0 || concurrentTime == 0) {
-            return;
+        if (sequentialTime > 0 && concurrentTime > 0) {
+            TimeHelper.ComparisonResult c
+                    = TimeHelper.compare(sequentialTime, concurrentTime);
+            mainWindow.setSpeedup(c.getSpeedupText());
+            mainWindow.setEfficiency(c.getEfficiencyText());
         }
-
-        TimeHelper.ComparisonResult comparison
-                = TimeHelper.compare(sequentialTime, concurrentTime);
-
-        SwingUtilities.invokeLater(() -> {
-            mainWindow.setSpeedup(comparison.getSpeedupText());
-            mainWindow.setEfficiency(comparison.getEfficiencyText());
-        });
+        // También comparar parallel vs sequential
+        if (sequentialTime > 0 && parallelTime > 0) {
+            TimeHelper.ComparisonResult p
+                    = TimeHelper.compare(sequentialTime, parallelTime);
+            mainWindow.setParallelSpeedup(p.getSpeedupText());
+        }
     }
 
-    // ── Getters for UI ────────────────────────────────────────────
+    // == Getters for UI ================================
     public List<File> getLoadedFiles() {
         return loadedFiles;
     }
