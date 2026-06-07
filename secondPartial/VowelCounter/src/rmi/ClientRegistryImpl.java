@@ -18,10 +18,12 @@ public class ClientRegistryImpl extends UnicastRemoteObject
     }
 
     @Override
-    public void register(VowelCounterRemote client, String clientId)
-            throws RemoteException {
-        System.out.println("Client registering: " + clientId);
-        server.registerClient(client);
+    public void register(VowelCounterRemote client,
+            String clientId,
+            String basePath) throws RemoteException {
+        System.out.println("Client registering: " + clientId
+                + " basePath: " + basePath);
+        server.registerClient(client, basePath); // ← pasar basePath
     }
 
     @Override

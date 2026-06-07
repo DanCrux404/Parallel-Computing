@@ -45,6 +45,8 @@ public class CounterManager {
     private final RMIServer rmiServer = new RMIServer();
     private final ParallelCounter parallelCounter = new ParallelCounter(rmiServer);
 
+    private java.util.Map<String, Integer> fileIndexMap = new java.util.HashMap<>();
+
     public CounterManager(MainWindow mainWindow, StatsWindow statsWindow) {
         this.mainWindow = mainWindow;
         this.statsWindow = statsWindow;
@@ -80,7 +82,7 @@ public class CounterManager {
         parallelCounter.setListener(new ParallelCounter.ParallelListener() {
             @Override
             public void onPartitionAssigned(String nodeId, int fileCount) {
-                System.out.println(nodeId + " → " + fileCount + " files");
+                System.out.println(nodeId + " -> " + fileCount + " files");
             }
 
             @Override
@@ -108,29 +110,75 @@ public class CounterManager {
         if (loadedFiles.isEmpty()) {
             return;
         }
-        if (rmiServer.getClientCount() == 0) {
-            System.out.println("No clients connected!");
-            return;
-        }
+
+        int clientCount = rmiServer.getClientCount();
+        System.out.println("Parallel with " + (clientCount + 1) + " nodes");
 
         SwingUtilities.invokeLater(() -> {
             mainWindow.setButtonsEnabled(false);
-            mainWindow.setStatus(AppStatus.RUNNING_CONCURRENT);
+            mainWindow.setStatus(AppStatus.RUNNING_PARALLEL); // ← Agrega esto al enum
             mainWindow.resetFileStatuses();
             statsWindow.clearStats();
+            mainWindow.setThreadCount(threadsPerNode);
         });
 
         new Thread(() -> {
             try {
-                parallelCounter.process(loadedFiles, threadsPerNode);
+                List<VowelResult> results = parallelCounter.process(loadedFiles, threadsPerNode);
+
+                // Update table with ALL results at the end
+                SwingUtilities.invokeLater(() -> {
+                    for (VowelResult r : results) {
+                        int fileIndex = findFileIndex(r.getFileName());
+                        if (fileIndex >= 0) {
+                            mainWindow.updateFileResult(fileIndex, r);
+                        }
+                    }
+
+                    mainWindow.setStatus(AppStatus.DONE);
+                    mainWindow.setButtonsEnabled(true);
+                });
+
             } catch (Exception e) {
                 System.out.println("Parallel error: " + e.getMessage());
+                e.printStackTrace();
+                SwingUtilities.invokeLater(() -> {
+                    mainWindow.setStatus(AppStatus.DONE);
+                    mainWindow.setButtonsEnabled(true);
+                });
             }
         }, "Parallel-Runner").start();
     }
+
+    public void loadFiles(List<File> files) {
+        loadedFiles = files;
+        fileIndexMap.clear(); // Reset map
+        lastResults.clear();
+
+        // Build index map for O(1) lookups
+        for (int i = 0; i < files.size(); i++) {
+            fileIndexMap.put(files.get(i).getName(), i);
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            mainWindow.clearTable();
+            mainWindow.setFileCount(files.size());
+            statsWindow.clearStats();
+
+            for (File file : files) {
+                mainWindow.addFileRow(file.getName(), VowelResult.Status.PENDING);
+            }
+        });
+    }
+
+// Replace findFileIndex with O(1) lookup
+    private int findFileIndex(String fileName) {
+        Integer index = fileIndexMap.get(fileName);
+        return index != null ? index : -1;
+    }
+
     // == Setup listeners for both counters ============================
     // Same callback pattern as Buffer/Database in previous projects
-
     private void setupListeners() {
 
         // Sequential listener
@@ -190,24 +238,6 @@ public class CounterManager {
                     mainWindow.setButtonsEnabled(true);
                     updateComparison();
                 });
-            }
-        });
-    }
-
-    // == Called by btnUpload =============================
-    public void loadFiles(List<File> files) {
-        loadedFiles = files;
-        lastResults.clear();
-
-        // Reset UI for new files
-        SwingUtilities.invokeLater(() -> {
-            mainWindow.clearTable();
-            mainWindow.setFileCount(files.size());
-            statsWindow.clearStats();
-
-            // Add each file to table as PENDING
-            for (File file : files) {
-                mainWindow.addFileRow(file.getName(), VowelResult.Status.PENDING);
             }
         });
     }

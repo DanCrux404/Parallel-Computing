@@ -1,9 +1,7 @@
 package rmi;
 
-import common.ClientRegistry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import common.VowelCounterRemote;
@@ -19,7 +17,8 @@ public class RMIServer {
     public static final String SERVICE_NAME = "VowelCounter";
 
     // Connected clients — added as they connect
-    private final List<VowelCounterRemote> connectedClients = new ArrayList<>();
+    private final java.util.Map<VowelCounterRemote, String> clientPaths
+            = new java.util.LinkedHashMap<>();
 
     // Listener to notify UI when a client connects/disconnects
     public interface ServerListener {
@@ -39,44 +38,49 @@ public class RMIServer {
 
     // == Start RMI registry and wait for clients ==================
     public void start() throws Exception {
+        System.setProperty("java.rmi.server.hostname", "192.168.0.160");
         // Create RMI registry on this machine
         // This is like the "phone book" — clients look up services here
         Registry registry = LocateRegistry.createRegistry(RMI_PORT);
 
         // Create the callback object — clients call this to register
         ClientRegistryImpl registryImpl = new ClientRegistryImpl(this);
-        ClientRegistry stub = (ClientRegistry) UnicastRemoteObject.exportObject(registryImpl, 0);
 
         // Register in the registry — clients find it by SERVICE_NAME
-        registry.rebind(SERVICE_NAME + "_registry", stub);
+        registry.rebind(SERVICE_NAME + "_registry", registryImpl);
 
         System.out.println("RMI Server started on port " + RMI_PORT);
         System.out.println("Waiting for clients...");
     }
 
     // == Called when a client connects =======================
-    public synchronized void registerClient(VowelCounterRemote client) {
-        connectedClients.add(client);
-        System.out.println("Client connected! Total: " + connectedClients.size());
+    public synchronized void registerClient(VowelCounterRemote client,
+            String basePath) {
+        clientPaths.put(client, basePath);
+        System.out.println("Client connected! Total: " + clientPaths.size());
         if (listener != null) {
-            listener.onClientConnected(connectedClients.size());
+            listener.onClientConnected(clientPaths.size());
         }
     }
 
     // == Called when a client disconnects ========================
     public synchronized void unregisterClient(VowelCounterRemote client) {
-        connectedClients.remove(client);
-        System.out.println("Client disconnected! Total: " + connectedClients.size());
+        clientPaths.remove(client); // ← clientPaths en lugar de connectedClients
+        System.out.println("Client disconnected! Total: " + clientPaths.size());
         if (listener != null) {
-            listener.onClientDisconnected(connectedClients.size());
+            listener.onClientDisconnected(clientPaths.size());
         }
     }
 
     public synchronized List<VowelCounterRemote> getConnectedClients() {
-        return new ArrayList<>(connectedClients); // defensive copy
+        return new ArrayList<>(clientPaths.keySet());
+    }
+
+    public synchronized String getClientBasePath(VowelCounterRemote client) {
+        return clientPaths.get(client);
     }
 
     public synchronized int getClientCount() {
-        return connectedClients.size();
+        return clientPaths.size();
     }
 }

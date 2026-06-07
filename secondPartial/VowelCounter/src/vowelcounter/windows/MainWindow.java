@@ -9,6 +9,7 @@ import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import model.AppStatus;
+import static model.AppStatus.RUNNING_PARALLEL;
 import model.VowelResult;
 
 /**
@@ -186,8 +187,11 @@ public class MainWindow extends javax.swing.JFrame {
                 lblStatusValue.setText(AppStatus.RUNNING_SEQUENTIAL.toString());
             case RUNNING_CONCURRENT ->
                 lblStatusValue.setText(AppStatus.RUNNING_CONCURRENT.toString());
+            case RUNNING_PARALLEL ->
+                lblStatusValue.setText(AppStatus.RUNNING_PARALLEL.toString());
             case DONE ->
                 lblStatusValue.setText(AppStatus.DONE.toString());
+
         }
     }
 
@@ -220,9 +224,8 @@ public class MainWindow extends javax.swing.JFrame {
     public void setParallelTime(long ms) {
         lblParallelValue.setText(ms + " ms");
     }
-    
-    public void setParallelSpeedup(String text)
-    {
+
+    public void setParallelSpeedup(String text) {
         lblParallelValue.setText(text);
     }
 

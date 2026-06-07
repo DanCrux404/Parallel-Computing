@@ -11,12 +11,12 @@ public interface VowelCounterRemote extends Remote {
     // Minimal communication — one call, all files, all results back
     // Client handles its own threads internally — server doesn't care how
     //
-    // filesContent → raw bytes of each file (server reads and sends)
-    // fileNames    → just for logging/display purposes
-    // returns      → one VowelResult per file
+    // filesPath file path, better to send direct file
+    // threadsPerNode     How many threads we use on each pc
+    // returns       one VowelResult per file
 
-    VowelResult[] countFiles(byte[][] filesContent, String[] fileNames,
-             int threadsPerNode)
+    VowelResult[] countFiles(String[] filePaths,
+            int threadsPerNode)
             throws RemoteException;
 
     // Server calls this to check if client is alive

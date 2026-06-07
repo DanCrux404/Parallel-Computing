@@ -365,4 +365,8 @@ public class ClientWindow extends javax.swing.JFrame {
     private javax.swing.JLabel lblTotalCount;
     private javax.swing.JLabel lblU;
     // End of variables declaration//GEN-END:variables
+
+    public void clearTable() {
+        filesModel.setRowCount(0);
+    }
 }
