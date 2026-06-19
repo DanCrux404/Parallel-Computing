@@ -90,13 +90,13 @@ public class TestFileGenerator {
     // Run this once before testing the application
     public static void main(String[] args) throws IOException {
         File outputDir = new File("/media/storage/Documents/TestFiles");
-        //generateFiles(outputDir, 1, 2000);
+        generateFiles(outputDir, 1, 1_000_000);
         //Small test — 5 files of 100KB
         //generateFiles(outputDir, 5, 100);
         // Medium test — 100 files of 500KB
         //generateFiles(outputDir, 100, 500);
         // Heavy test — 10,000 files of 1MB each — uncomment for stress test
-        generateFiles(outputDir, 10_000, 1000);
+        //generateFiles(outputDir, 10_000, 1000);
         // EXTREME test — 1,000,000 files MUEJEJEJEJE and 10MB
         //generateFiles(outputDir, 1_000_000, 10_000);
     }

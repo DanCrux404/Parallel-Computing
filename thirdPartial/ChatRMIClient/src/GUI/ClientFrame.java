@@ -140,7 +140,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         // TODO add your handling code here:
-        manager.connect("192.168.0.160", 1234);
+        manager.connect("192.168.84.77", 1234);
     }//GEN-LAST:event_btnConnectActionPerformed
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed

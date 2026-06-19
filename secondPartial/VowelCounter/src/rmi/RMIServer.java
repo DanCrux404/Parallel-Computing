@@ -38,7 +38,7 @@ public class RMIServer {
 
     // == Start RMI registry and wait for clients ==================
     public void start() throws Exception {
-        System.setProperty("java.rmi.server.hostname", "192.168.0.160");
+        System.setProperty("java.rmi.server.hostname", "192.168.84.75");
         // Create RMI registry on this machine
         // This is like the "phone book" — clients look up services here
         Registry registry = LocateRegistry.createRegistry(RMI_PORT);
@@ -65,7 +65,7 @@ public class RMIServer {
 
     // == Called when a client disconnects ========================
     public synchronized void unregisterClient(VowelCounterRemote client) {
-        clientPaths.remove(client); // ← clientPaths en lugar de connectedClients
+        clientPaths.remove(client); // clientPaths en lugar de connectedClients
         System.out.println("Client disconnected! Total: " + clientPaths.size());
         if (listener != null) {
             listener.onClientDisconnected(clientPaths.size());

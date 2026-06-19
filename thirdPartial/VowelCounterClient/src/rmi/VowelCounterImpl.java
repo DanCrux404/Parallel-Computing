@@ -75,7 +75,7 @@ public class VowelCounterImpl extends UnicastRemoteObject
 
                 long fileStart = System.nanoTime();
 
-                // Read file LOCALLY — no network transfer needed ✅
+                // Read file LOCALLY — no network transfer needed
                 try (java.io.BufferedReader reader = new java.io.BufferedReader(
                         new java.io.FileReader(filePath))) {
                     int c;
@@ -117,25 +117,9 @@ public class VowelCounterImpl extends UnicastRemoteObject
         return results;
     }
 
-    // == ping — server checks if client is alive =============0
+    // == ping — server checks if client is alive =============
     @Override
     public boolean ping() throws RemoteException {
         return true; // If we got here, we're alive 
-    }
-
-    // == Count vowels from raw bytes — no file needed ==============
-    // Same logic as SequentialCounter but reads from bytes not file
-    // Bytes travel via RMI through server
-    private void countVowelsFromBytes(byte[] content, VowelResult result) {
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        new ByteArrayInputStream(content), "UTF-8"))) {
-            int c;
-            while ((c = reader.read()) != -1) {
-                result.countVowel((char) c);
-            }
-        } catch (Exception e) {
-            result.setStatus(VowelResult.Status.ERROR);
-        }
     }
 }

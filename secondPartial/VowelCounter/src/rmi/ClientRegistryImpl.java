@@ -23,7 +23,7 @@ public class ClientRegistryImpl extends UnicastRemoteObject
             String basePath) throws RemoteException {
         System.out.println("Client registering: " + clientId
                 + " basePath: " + basePath);
-        server.registerClient(client, basePath); // ← pasar basePath
+        server.registerClient(client, basePath);
     }
 
     @Override
